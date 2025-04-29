@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>विशेष विवाह निमंत्रण</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 20px; /* Added top/bottom padding */
+            background: linear-gradient(145deg, #4b0000, #8b0000, #4b0000); /* Slightly adjusted gradient */
+            background-attachment: fixed; /* Keep background fixed during scroll */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            color: #fff;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            line-height: 1.7; /* Slightly increased line-height */
+        }
+
+        /* Falling Elements Container */
+        #falling-elements-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow clicks through */
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            top: -50px; /* Start above screen */
+            width: 15px;
+            height: 15px;
+            background-color: rgba(255, 215, 0, 0.7); /* Gold color */
+            border-radius: 50% 0 50% 0; /* Petal shape */
+            opacity: 0;
+            animation: fallingPetal linear forwards;
+            filter: blur(1px);
+        }
+
+        /* Card Container */
+        .card-container {
+            width: 95%;
+            max-width: 950px; /* Slightly wider */
+            perspective: 1800px; /* Increased perspective for stronger 3D */
+            position: relative;
+            z-index: 10;
+            transition: transform 0.1s ease-out; /* Smooth parallax movement */
+        }
+
+        /* Main Card */
+        .card {
+            background: #8b0000 url('https://www.transparenttextures.com/patterns/old-wall.png');
+            color: #fff;
+            border: 5px solid transparent; /* Use border-image */
+            border-image: linear-gradient(45deg, #ffd700, #ffec8b, #ffd700); /* Gradient border */
+            border-image-slice: 1;
+            border-radius: 20px; /* Smoother radius */
+            display: flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); /* Enhanced shadow */
+            transform-style: preserve-3d;
+            position: relative;
+            opacity: 0; /* Start hidden for entry animation */
+            transform: rotateY(15deg) scale(0.9); /* Initial state for entry */
+            animation: cardEntry 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards; /* Delayed entry animation */
+            transition: box-shadow 0.4s ease, transform 0.4s ease; /* Smooth hover transition */
+            padding: 10px; /* Padding around panels */
+        }
+
+        .card:hover {
+            box-shadow: 0 25px 50px rgba(255, 215, 0, 0.3); /* Gold glow shadow on hover */
+            transform: scale(1.01); /* Slight scale up on hover */
+        }
+
+        /* Card Panels */
+        .card-left, .card-right {
+            flex: 1;
+            padding: 35px; /* Increased padding */
+            min-width: 340px;
+            position: relative;
+            background: rgba(100, 0, 0, 0.85); /* Slightly darker, more opaque */
+            border-radius: 10px; /* Rounded corners for inner panels */
+            margin: 5px; /* Spacing between panels */
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5); /* Inner shadow for depth */
+        }
+
+        .card-left {
+            border-right: 3px dashed rgba(255, 215, 0, 0.7); /* Thicker, slightly transparent dash */
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 30px; /* Increased spacing */
+            padding-bottom: 25px;
+            border-bottom: 1px dotted rgba(255, 215, 0, 0.5); /* Slightly more visible dot */
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideIn 1.2s ease-out forwards;
+        }
+        .section:last-child {
+            border-bottom: none; /* Remove border from last section */
+            margin-bottom: 0;
+        }
+
+        /* Personalization Elements */
+        .personalized-border {
+            /* Removed - integrated border into .card */
+        }
+
+        #recipient-name {
+            font-size: 1.9em; /* Slightly larger */
+            color: #ffd700;
+            text-shadow: 0 0 18px #ffd700, 0 0 25px #ffec8b; /* Enhanced glow */
+            animation: nameGlow 1.8s infinite alternate ease-in-out; /* Smoother glow */
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1); /* Subtle background */
+        }
+
+        .personal-note {
+            display: none; /* Initially hidden */
+            text-align: center;
+            font-style: italic;
+            color: #ffec8b; /* Lighter gold */
+            margin: 20px 0 25px 0;
+            font-size: 1.4em; /* Larger note */
+            font-family: 'Tangerine', cursive;
+            opacity: 0;
+            animation: fadeIn 1s 1s forwards; /* Fade in after card entry */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+
+        /* Decorative Elements */
+        .animated-flower {
+            position: absolute;
+            width: 60px; /* Larger flowers */
+            height: 60px;
+            opacity: 0; /* Start hidden */
+            animation: flowerFloat 5s infinite ease-in-out, flowerFadeIn 1s ease-out forwards;
+            z-index: 0;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); /* Add subtle glow */
+        }
+        /* Unique positions and delays */
+        .flower-1 { top: 5%; left: 2%; animation-delay: 1.0s, 1.0s; transform: rotate(-15deg); }
+        .flower-2 { top: 8%; right: 3%; animation-delay: 1.5s, 1.5s; transform: rotate(20deg); }
+        .flower-3 { bottom: 5%; left: 4%; animation-delay: 2.0s, 2.0s; transform: rotate(10deg); }
+        .flower-4 { bottom: 8%; right: 5%; animation-delay: 2.5s, 2.5s; transform: rotate(-25deg); }
+
+
+        .icon {
+            display: block;
+            margin: 15px auto 20px auto; /* Adjusted margin */
+            font-size: 3.5em; /* Larger icon */
+            color: #ffd700;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.9), 0 0 25px rgba(255, 236, 139, 0.6); /* Stronger glow */
+            animation: iconGlow 2.5s infinite alternate ease-in-out; /* Adjusted glow animation */
+        }
+
+        /* Typography */
+        h2, h3 {
+            text-align: center;
+            color: #ffec8b; /* Lighter gold for headings */
+            margin-bottom: 15px;
+            margin-top: 5px;
+            font-size: 1.6em; /* Larger headings */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6); /* Stronger text shadow */
+            font-weight: 700;
+            letter-spacing: 1px; /* Add spacing */
+        }
+
+        h3 {
+            font-size: 1.4em;
+            color: #ffd700;
+        }
+
+        .name {
+            font-size: 2em; /* Larger names */
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.5); /* Enhanced highlight */
+            animation: nameHighlight 2.2s infinite alternate ease-in-out; /* Adjusted highlight animation */
+            letter-spacing: 0.5px;
+        }
+
+        ul {
+            list-style: none; /* Remove default bullets */
+            padding-left: 15px;
+            text-align: center;
+        }
+
+        li {
+            margin-bottom: 8px; /* Space out list items */
+            position: relative;
+            padding-left: 20px; /* Space for custom bullet */
+        }
+
+        /* Custom list bullets */
+        li::before {
+            content: '✨'; /* Sparkle emoji or other symbol */
+            color: #ffd700;
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-size: 0.9em;
+            animation: sparklePulse 1.5s infinite;
+        }
+
+        .hosts ul {
+             columns: 2; /* Display hosts in two columns */
+             -webkit-columns: 2;
+             -moz-columns: 2;
+             gap: 20px; /* Space between columns */
+             text-align: left;
+             padding-left: 5px;
+        }
+        .hosts li::before {
+            content: '🙏'; /* Folded hands for hosts */
+            top: 0;
+        }
+
+
+        /* Countdown Timer */
+        #countdown {
+            text-align: center;
+            font-size: 1.3em;
+            color: #ffec8b;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 1s ease-out 3s forwards; /* Delayed appearance */
+        }
+         #countdown span {
+            font-weight: bold;
+            color: #fff;
+            margin: 0 5px;
+        }
+
+        /* Animations */
+        @keyframes cardEntry {
+            to {
+                opacity: 1;
+                transform: rotateY(0deg) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes nameGlow {
+            0% { text-shadow: 0 0 15px #ffd700, 0 0 22px #ffec8b; }
+            100% { text-shadow: 0 0 25px #ffd700, 0 0 35px #ffec8b; }
+        }
+
+        @keyframes flowerFloat {
+            0%, 100% { transform: translateY(0) rotate(var(--initial-rotate, 0deg)); }
+            50% { transform: translateY(-25px) rotate(calc(var(--initial-rotate, 0deg) + 10deg)); }
+        }
+        @keyframes flowerFadeIn {
+             to { opacity: 0.8; }
+        }
+
+
+        @keyframes iconGlow {
+             0% { text-shadow: 0 0 12px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 236, 139, 0.5); transform: scale(1); }
+             100% { text-shadow: 0 0 22px rgba(255, 215, 0, 1), 0 0 30px rgba(255, 236, 139, 0.7); transform: scale(1.05); }
+        }
+
+        @keyframes nameHighlight {
+             0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.4); }
+             100% { text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 25px rgba(255, 255, 255, 0.7); }
+        }
+
+        @keyframes sparklePulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        @keyframes fallingPetal {
+            0% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7; /* Fade in */
+            }
+            100% {
+                transform: translateX(var(--petal-drift, 0px)) translateY(110vh) rotate(720deg); /* Fall down and rotate */
+                opacity: 0; /* Fade out at bottom */
+            }
+        }
+
+        /* Enhanced Fireworks Effect */
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--firework-color, #ffd700);
+            box-shadow: 0 0 8px 2px var(--firework-color, #ffd700);
+            opacity: 1;
+            animation: fireworkExplode 1.2s ease-out forwards;
+        }
+
+        @keyframes fireworkExplode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0); /* Explode outwards */
+                opacity: 0;
+            }
+        }
+
+
+        /* Section Animation Delays */
+        .card-left .section:nth-child(1) { animation-delay: 1.0s; }
+        .card-left .section:nth-child(2) { animation-delay: 1.3s; }
+        .card-left .section:nth-child(3) { animation-delay: 1.6s; }
+        .card-left .section:nth-child(4) { animation-delay: 1.9s; }
+        .card-right .section:nth-child(1) { animation-delay: 2.2s; }
+        .card-right .section:nth-child(2) { animation-delay: 2.5s; }
+        .card-right .section:nth-child(3) { animation-delay: 2.8s; }
+        .card-right .section:nth-child(4) { animation-delay: 3.1s; }
+        .card-right .section:nth-child(5) { animation-delay: 3.4s; }
+        .card-right #countdown { animation-delay: 3.7s; } /* Delay for countdown */
+
+
+        /* Responsive Design */
+        @media (max-width: 850px) { /* Adjusted breakpoint */
+            .card {
+                flex-direction: column;
+                border-width: 3px; /* Thinner border on mobile */
+                 transform: rotateY(0deg) scale(0.95); /* Adjust entry for mobile */
+                 animation: cardEntryMobile 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+            }
+             @keyframes cardEntryMobile {
+                to { opacity: 1; transform: scale(1); }
+            }
+
+            .card-left {
+                border-right: none;
+                border-bottom: 3px dashed rgba(255, 215, 0, 0.7); /* Apply dash to bottom */
+            }
+
+            .card-left, .card-right {
+                padding: 25px; /* Adjust padding */
+                min-width: unset;
+                margin: 5px 0; /* Vertical spacing */
+            }
+
+             .hosts ul {
+                 columns: 1; /* Single column for hosts on smaller screens */
+            }
+
+            .section {
+                margin-bottom: 25px;
+                padding-bottom: 20px;
+            }
+
+            h2, h3 {
+                font-size: 1.4em;
+            }
+            h3 { font-size: 1.25em; }
+
+            .name {
+                font-size: 1.7em;
+            }
+
+            #recipient-name {
+                font-size: 1.6em;
+            }
+
+            .icon {
+                font-size: 3em;
+            }
+             #countdown {
+                 font-size: 1.1em;
+             }
+             .animated-flower {
+                 width: 45px; height: 45px;
+             }
+        }
+         @media (max-width: 480px) {
+             body { padding: 20px 10px; }
+             .card-left, .card-right { padding: 20px; }
+             h2, h3 { font-size: 1.3em; }
+             h3 { font-size: 1.15em; }
+             .name { font-size: 1.5em; }
+             #recipient-name { font-size: 1.4em; }
+             .personal-note { font-size: 1.2em; }
+             li { font-size: 0.95em; }
+             #countdown { font-size: 1em; padding: 10px; }
+             .animated-flower { display: none; } /* Hide flowers on very small screens */
+         }
+
+    </style>
+</head>
+<body>
+    <div id="falling-elements-container"></div>
+
+    <img src="data:image/png;base64,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" class="animated-flower flower-1" style="--initial-rotate: -15deg;">
+    <img src="data:image/png;base64,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" class="animated-flower flower-2" style="--initial-rotate: 20deg;">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AkEEjIZJ2zB1wAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAADOUlEQVRo3u2aTUhUURTHf+85M6OOaVpGX4tICyqCCCoIok2bNkGLNkGLoE1BQbQoWkSLoE1BQYsgaFEEQYsgaBEEQYsgaBEEQYsgaBFRH+M4M+/e0+JNvDdv3ow6M4X0wIXD5Z17z/mfe+65574rqspuNg1wB3gMfAIWgGXgJ/AOGAXOAZFOFZFOFAGuA2+BNPAX+ANMAfeBk0A/0ANEgR7gGHANeAGkgDTwCxgHjnVKpBMdA94DGeA7cBkYAA4C+4A4EAP2AnuAKBAH+oFzwFMgA2SAj8DZdoq0o1PAFJAGXgPHW9z/OPAKSAPTzZS0K9KqBoF3wDLwDDjUgc1D5XwGloDnwMF2RVrVMPAVWAQeAX0h2e0DHgCLwDfgSjtFmtUI8A1IAXeBaMi2o8BdIAV8B0aaFWlGZ4B5YAG4HpJILdcLzAPzwNlmRBrpPDALzAJXQhKp5QowC8wBF5oRqaerwA9gBrgUkkQ9XQJmgB/A1UZF6ukGMA1MAedDkqin88A0MA3cbESknoaBL8AX4GJIEvV0EfgMfAGG6hWpp5vAZ2AKOBOSRD2dA6aAKWC4XpF6GgGmgY/AUEgS9TQETAIzwM16ROppFJgBJoDBkCTqaRCYAGaB0XpE6ukW8BGYAE6HJFFPp4EJ4BMwVo9IPd0GJoH3wMmQJOrpBPAemARu1yNST3eA98A74FhIEvV0DHgLvAfu1iNST2PAO+ANcCQkiXo6DLwG3gP36hGpp/vABPAKOBiSRD0dAF4CE8CDehZSTw+Bl8Bz4EBIEvV0AHgGvAAe1bOQenoMPAOeAv0hSdRTP/AEeAo8rmch9fQEeAQ8BPpCkqinPuAB8BB4Ws9C6ukZcB+4B+wNSaKe9gL3gHvA83oWUk8vgLvAXWBPSBL1tAe4A9wBXta6kHp6BdwGbgHRkCTqKQrcBG4Br2tdSD29BsaBMSASkkQ9RYAxYBx4U+tC6ukNMApcByIhSdRTBLgGjAJva11IPb0FRoARIBKSRD1FgGFgGHhX60Lq6T0wDFwFIiFJ1FMUuAJcAT7UupB6+gBcBi4BkZAk6ikKXAIuAh9rXUg9fQIuAheASEgS9RQBLgDngc+1LqSevgDngHNAJCSJeooCZ4EzwNdaF1JP34AzwGkgEpJEPUWBU8BJ4FutC6mn78BJ4AQQCUminiLACeA48L3WhdTTD+A4cAyIhCRRTxHgKHAEmK11IfU0CxwBDgORkCTqKQIcAg4Cc7UupJ7mgIPAAUBCkqgnAfYDB4D5WhdSTwvAfqAPkJAk6kmAPqAXWKx1IfW0BPQCewAJSaKeBNgD9ABLtS6knpaBHiAOSEgS9SRAHIgBK7UupJ5WgRgQAyQkiXoSIApEgXStC6mnDBAFIoCEJFFPAkSACJCpdSH1lAUiQBiQkCTqSYAwEAaytS6knrJAGAgBEpJEPQkQAkJArtaF1FMOCAEhQEKSqCcBQkAQyNe6kHrKA0EgCEhIEvUkQAAIAIVaF1JPBSAABAAJSaKeBAgAfsBX60LqyQf4AT8gIUnUkwB+wAf4a11IPfkAH+ADJCSJehLAB3gBX60LqScv4AW8gIQkUU8CeAEP4K11IfXkATyAG5CQJOpJADfgBty1LqSeXIAbcAESkkQ9CeACXIALcNW6kHpyAk7ACTgBCUmingRwAg7AAThqXUg92QE7YAccgIQkUU8C2AEbYANstS6knqyAFbACVkBCkqgnAayABbAA1loXUk9mwAxYADMgIUnUkwBmwASYAFOtC6knE2ACTIAJkJAk6kkAE2AETICx1oXUkxEwAkbAAEhIEvUkgAEwAAbAUOtC6kkAPaAH9IAekJAk6kkAPaADdIAO0NW6kHrSATpAB+gACUmingTQAVpAC2gBba0LqSctoAG0gAbQABKSRD0JoAE0gBrQ1LqQelIDakANqAAVIJ2QqKf/1X8yZx9Pw3gXlwAAAABJRU5ErkJggg==" class="animated-flower flower-3" style="--initial-rotate: 10deg;">
+    <img src="data:image/png;base64,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" class="animated-flower flower-4" style="--initial-rotate: -25deg;">
+
+
+    <div class="card-container" id="card-container">
+        <div class="card" id="card">
+            <div class="personal-note" id="personal-note" style="width: 100%; flex-basis: 100%; order: -1; padding: 0 20px;"> प्रिय <span id="special-name">अतिथि</span> जी, यह निमंत्रण विशेष रूप से आपके लिए!
+            </div>
+
+            <div class="card-left">
+                <div class="section blessings">
+                     <p style="text-align:center; font-size: 1.1em; color: #ffec8b;">ॐ गणेशाय नमः</p>
+                    <p>शुभम करोति कल्याणम,</p>
+                    <p>आरोग्यम धन संपदा,</p>
+                    <p>शत्रु बुद्धि विनाशाय,</p>
+                    <p>दीप ज्योति नमोस्तुते।।</p>
+                </div>
+
+                <div class="section invitation-text">
+                    <p>पूज्यनीय,</p>
+                    <p><span id="recipient-name">अतिथि</span> एवं समस्त परिवार</p> <p>आपको यह सूचित करते हुए हमें अत्यंत हर्ष हो रहा है कि ईश्वर की असीम अनुकम्पा से हमारे सुपुत्र</p> </div>
+
+                <div class="section bride-groom-details">
+                    <h2>चि. (आयुष्मान्)</h2> <p class="name">राजेश कुमार</p>
+                    <p>(सुपुत्र: श्री दीनानाथ शर्मा एवं श्रीमती राधिका देवी)</p> <p style="text-align:center; margin: 15px 0; font-size: 1.2em; color: #ffec8b;">का शुभ विवाह</p> <h2>सौ. कां. (आयुष्मती)</h2> <p class="name">प्रिया कुमारी</p>
+                    <p>(सुपुत्री: श्री महेन्द्र शर्मा एवं श्रीमती मीना देवी)</p> <p>निवासी: ग्राम एकौना, पो० तारा, थाना ओबरा,</p>
+                    <p>जिला औरंगाबाद (बिहार)</p>
+                    <p>के साथ होना निश्चित हुआ है।</p>
+                </div>
+
+                <div class="section hosts">
+                    <h3>स्वागतकर्ता एवं विनीत:</h3> <ul>
+                        <li>श्री दीनानाथ शर्मा</li>
+                        <li>श्री देवनाथ शर्मा</li>
+                        <li>श्री रामनाथ शर्मा</li> <li>श्री कपिल शर्मा</li>
+                        <li>विनोद शर्मा</li>
+                        <li>विकाश शर्मा</li>
+                        <li>अमित शर्मा</li>
+                        <li>राकेश शर्मा</li>
+                        <li>उपेन्द्र शर्मा</li>
+                        <li>मनिष शर्मा</li>
+                        <li>रमेश शर्मा</li>
+                        <li>जितेन्द्र शर्मा</li>
+                        <li>एवं समस्त शर्मा परिवार</li> </ul>
+                    <p style="text-align:center; margin-top: 15px;">आपकी उपस्थिति प्रार्थनीय है।</p>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="section top-right">
+                    <p style="text-align:center; font-size: 1.1em; color: #ffec8b;">॥ श्री गणेशाय नमः ॥</p>
+                    <p style="text-align:center; font-size: 1.1em; color: #ffec8b;">॥ मंगलम् भगवान विष्णु, मंगलम् गरुड़ध्वज ॥</p> <p class="icon">💖</p> <p>इस मंगलमय मधुर वेला पर नव-दम्पत्ति को अपना स्नेह एवं शुभाशीर्वाद प्रदान करने हेतु आप सपरिवार सादर आमंत्रित हैं।</p> </div>
+
+                 
+
+
+                <div class="section program-details">
+                    <h3>वैवाहिक कार्यक्रम</h3>
+                    <ul>
+                        <li><strong>मण्डपाच्छादन एवं हल्दी:</strong> दिनांक 08 मई 2025, गुरुवार</li> <li><strong>मातृका पूजन एवं देव पूजन:</strong> दिनांक 09 मई 2025, शुक्रवार</li> <li><strong>बारात प्रस्थान एवं शुभ विवाह:</strong> दिनांक 10 मई 2025, शनिवार</li> <li><strong>समय:</strong> संध्या 7:00 बजे से</li> </ul>
+                     <p style="text-align:center; margin-top: 15px;"><strong>विवाह स्थल:</strong> [अपना पता यहाँ डालें], औरंगाबाद</p> </div>
+
+                <div class="section quote">
+                    <p>बनी रहे जोड़ी, खुशियों से भरी रहे झोली,</p> <p>राजेश संग प्रिया की सजे रंगोली।</p>
+                </div>
+
+                <div class="section regards">
+                     <h3>बाल मनुहार:</h3> <p style="font-style: italic; text-align:center;">"मेले प्यारे चाचू की छादी में जलूल से जलूल आना..."</p> <p style="text-align:center; font-weight: bold; color: #ffec8b;">- विशाल, आर्यन, पिहू</p> </div>
+
+                <div class="section note">
+                    <p class="note-text" style="text-align: center; font-weight: bold;">नोट: कृपया इस निमंत्रण पत्रिका को ही व्यक्तिगत निमंत्रण समझें।</p> </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardContainer = document.getElementById('card-container');
+            const card = document.getElementById('card');
+            const fallingElementsContainer = document.getElementById('falling-elements-container');
+            const recipientNameElement = document.getElementById('recipient-name');
+            const specialNameElement = document.getElementById('special-name');
+            const personalNote = document.getElementById('personal-note');
+            const countdownElement = document.getElementById('countdown');
+
+            const weddingDateString = "2025-05-10T19:00:00"; // *Corrected Date: May 10, 2025, 7 PM*
+            const weddingDate = new Date(weddingDateString);
+
+            // 1. Handle Personalization
+            handlePersonalization();
+
+            // 2. Initialize Animations (like section delays)
+            initAnimations();
+
+            // 3. Setup Event Listeners (like parallax)
+            setupEventListeners();
+
+            // 4. Start Dynamic Effects (countdown, petals)
+            startDynamicEffects();
+
+
+            // --- Function Definitions ---
+
+            function handlePersonalization() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const recipientName = urlParams.get('to');
+
+                if (recipientName) {
+                    try {
+                         // Decode URL component, handle potential errors
+                        const decodedName = decodeURIComponent(recipientName.replace(/\+/g, ' ')); // Handle space encoding
+
+                        // Update name elements
+                        recipientNameElement.textContent = decodedName;
+                        specialNameElement.textContent = decodedName;
+
+                        // Update page title
+                        document.title = ${decodedName} जी का विशेष विवाह निमंत्रण;
+
+                        // Show personal note with fade-in managed by CSS
+                        personalNote.style.display = 'block';
+
+                        // Trigger personalized effects (like fireworks)
+                        createFireworksShower(5); // Launch 5 fireworks initially
+
+                    } catch (e) {
+                        console.error("Error decoding recipient name:", e);
+                        // Use default if decoding fails
+                        recipientNameElement.textContent = "अतिथि";
+                        specialNameElement.textContent = "अतिथि";
+                    }
+                } else {
+                     // Default names if no parameter
+                    recipientNameElement.textContent = "अतिथि";
+                    specialNameElement.textContent = "अतिथि";
+                }
+            }
+
+            function initAnimations() {
+                // Set initial rotation for flowers (used in CSS animation)
+                document.querySelectorAll('.animated-flower').forEach(flower => {
+                    const initialRotate = flower.style.getPropertyValue('--initial-rotate');
+                    if (initialRotate) {
+                       flower.style.setProperty('--initial-rotate', initialRotate); // Re-apply just in case
+                    }
+                });
+
+                 // Apply staggered animation delays to sections (already handled by CSS, but could be done here too if needed)
+                // document.querySelectorAll('.section').forEach((section, index) => {
+                //     section.style.animationDelay = ${1.0 + (index * 0.3)}s;
+                // });
+            }
+
+            function setupEventListeners() {
+                 // Mouse Parallax Effect for the Card
+                 cardContainer.addEventListener('mousemove', (e) => {
+                     const rect = cardContainer.getBoundingClientRect();
+                     const x = e.clientX - rect.left - rect.width / 2;
+                     const y = e.clientY - rect.top - rect.height / 2;
+
+                     const rotateY = (x / rect.width) * 10; // Max rotation 5 degrees
+                     const rotateX = -(y / rect.height) * 10; // Max rotation 5 degrees
+
+                     // Apply the transform with perspective
+                     card.style.transform = rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1); // Keep scale(1) to prevent overriding hover scale
+                 });
+
+                 // Reset transform when mouse leaves the container
+                 cardContainer.addEventListener('mouseleave', () => {
+                      card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)'; // Reset to base scale
+                 });
+
+                // Optional: Trigger more fireworks on click
+                card.addEventListener('click', () => {
+                     createFireworksShower(1, event.clientX, event.clientY); // Launch one firework at click position
+                });
+            }
+
+            function startDynamicEffects() {
+                // Start Countdown Timer
+                updateCountdown(); // Initial call
+                setInterval(updateCountdown, 1000); // Update every second
+
+                // Start Falling Petals
+                setInterval(createFallingPetal, 500); // Add a new petal every 500ms
+            }
+
+
+            // --- Effect Functions ---
+
+             function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = weddingDate - now;
+
+                if (distance < 0) {
+                    countdownElement.innerHTML = "यह शुभ अवसर सम्पन्न हो चुका है!";
+                    // Optionally stop intervals here if needed
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = hours;
+                document.getElementById('minutes').textContent = minutes;
+                document.getElementById('seconds').textContent = seconds;
+             }
+
+            function createFallingPetal() {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+
+                const startX = Math.random() * window.innerWidth; // Start anywhere horizontally
+                const drift = (Math.random() - 0.5) * 200; // Horizontal drift +/- 100px
+                const duration = Math.random() * 5 + 5; // Duration between 5s and 10s
+                const delay = Math.random() * 2; // Start delay up to 2s
+
+                petal.style.left = ${startX}px;
+                petal.style.setProperty('--petal-drift', ${drift}px);
+                petal.style.animationDuration = ${duration}s;
+                petal.style.animationDelay = ${delay}s;
+
+                // Randomize petal appearance slightly
+                petal.style.width = ${Math.random() * 5 + 10}px; // Size 10-15px
+                petal.style.height = petal.style.width;
+                petal.style.opacity = Math.random() * 0.3 + 0.4; // Opacity 0.4-0.7
+                 petal.style.backgroundColor = hsl(50, 100%, ${Math.random() * 15 + 75}%); // Shades of gold/yellow
+
+                fallingElementsContainer.appendChild(petal);
+
+                // Remove petal after animation finishes (duration + delay)
+                setTimeout(() => {
+                    petal.remove();
+                }, (duration + delay) * 1000);
+            }
+
+             function createFireworksShower(count = 1, clickX = null, clickY = null) {
+                 const colors = ['#ffd700', '#ffec8b', '#ffc400', '#fffacd']; // Gold/Yellow shades
+                 const containerRect = cardContainer.getBoundingClientRect();
+
+                 for (let i = 0; i < count; i++) {
+                     // Delay fireworks slightly for a shower effect
+                    setTimeout(() => {
+                        const fireworkOrigin = document.createElement('div');
+                         // Position near the card or at click position
+                         let startX, startY;
+                        if (clickX !== null && clickY !== null) {
+                             startX = clickX;
+                             startY = clickY;
+                        } else {
+                             startX = containerRect.left + Math.random() * containerRect.width;
+                             startY = containerRect.top + Math.random() * containerRect.height;
+                        }
+
+                         // Create multiple particles for each firework burst
+                         const particleCount = Math.floor(Math.random() * 30) + 50; // 50-80 particles
+                         const burstColor = colors[Math.floor(Math.random() * colors.length)];
+
+                         for (let j = 0; j < particleCount; j++) {
+                             const particle = document.createElement('div');
+                             particle.className = 'firework-particle';
+                             particle.style.position = 'fixed'; // Use fixed for positioning relative to viewport
+                             particle.style.left = ${startX}px;
+                             particle.style.top = ${startY}px;
+                             particle.style.setProperty('--firework-color', burstColor);
+
+                             const angle = Math.random() * Math.PI * 2; // Random angle
+                             const distance = Math.random() * 100 + 50; // Explosion radius 50-150px
+                             const tx = Math.cos(angle) * distance;
+                             const ty = Math.sin(angle) * distance;
+
+                             particle.style.setProperty('--tx', ${tx}px);
+                             particle.style.setProperty('--ty', ${ty}px);
+
+                             document.body.appendChild(particle); // Append to body to overlay everything
+
+                             // Remove particle after animation
+                             setTimeout(() => {
+                                 particle.remove();
+                             }, 1200); // Match animation duration
+                         }
+                     }, i * 200); // Stagger the start of each firework burst
+                 }
+            }
+
+        });
+    </script>
+</body>
+</html>
