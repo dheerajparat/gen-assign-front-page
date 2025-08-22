@@ -373,7 +373,7 @@
                     <button class="btn" onclick="generateAssignment()">
                         <i class="fas fa-sync-alt"></i> Generate Page
                     </button>
-                    <button class="btn btn-print" onclick="window.print()">
+                    <button class="btn btn-print" onclick="saveToGoogleSheetAndPrint()">
                         <i class="fas fa-print"></i> Print as PDF
                     </button>
                 </div>
@@ -503,8 +503,41 @@
             generateAssignment();
         });
         
-        
+        function saveToGoogleSheetAndPrint() {
+            // Get input values
+            const subject = document.getElementById('subject').value;
+            const subjectCode = document.getElementById('subjectCode').value;
+            const topic = document.getElementById('topic').value;
+            const submissionDate = document.getElementById('submissionDate').value;
+            const studentName = document.getElementById('studentName').value;
+            const registrationNo = document.getElementById('registrationNo').value;
+            const branch = document.getElementById('branch').value;
+            const rollNo = document.getElementById('rollNo').value;
+
+            // Prepare data
+            const data = {
+                subject,
+                subjectCode,
+                topic,
+                submissionDate,
+                studentName,
+                registrationNo,
+                branch,
+                rollNo
+            };
+
+            // Send to Google Apps Script Web App
+            fetch('YOUR_SCRIPT_URL', {
+                method: 'POST',
+                mode: 'no-cors', // For Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(() => {
+                window.print();
+            });
+        }
     </script>
 </body>
 </html>
-
