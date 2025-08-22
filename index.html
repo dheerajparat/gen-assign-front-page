@@ -376,9 +376,6 @@
                     <button class="btn btn-print" onclick="window.print()">
                         <i class="fas fa-print"></i> Print as PDF
                     </button>
-                    <button class="btn btn-download" onclick="downloadPDF()">
-                        <i class="fas fa-download"></i> Download PDF
-                    </button>
                 </div>
             </div>
             
@@ -495,28 +492,19 @@
             document.getElementById('submissionDate').value = nextWeek;
             
             // Set default values for demonstration
-            document.getElementById('subject').value = "ELECTRONICS CIRCUIT & NETWORKS";
-            document.getElementById('subjectCode').value = "2021305";
-            document.getElementById('topic').value = "Semiconductor Devices and Applications";
-            document.getElementById('studentName').value = "Rahul Sharma";
-            document.getElementById('registrationNo').value = "2021EE12345";
-            document.getElementById('rollNo').value = "EE214";
+            document.getElementById('subject').value = "write your subject name";
+            document.getElementById('subjectCode').value = "Subject code";
+            document.getElementById('topic').value = "Assignment topic";
+            document.getElementById('studentName').value = "your name";
+            document.getElementById('registrationNo').value = "your reg.";
+            document.getElementById('rollNo').value = "Class Roll n.";
             
             // Generate initial assignment page
             generateAssignment();
         });
         
-        function downloadPDF() {
-            const element = document.getElementById('assignmentPage');
-            const opt = {
-                margin:       0,
-                filename:     'assignment_front_page.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
+        
     </script>
 </body>
 </html>
+
