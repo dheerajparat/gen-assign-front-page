@@ -48,6 +48,12 @@
                 padding: 1rem;
                 gap: 2rem;
             }
+            
+            /* Mobile par sticky behavior hata diya gaya hai taaki preview asani se dikhe */
+            .form-container {
+                position: relative !important;
+                top: 0 !important;
+            }
         }
 
         /* ===== FORM DESIGN ===== */
@@ -176,9 +182,8 @@
             margin-bottom: 6cqi;
         }
 
-        .assignment-title svg {
-            width: 18cqi;
-            height: 18cqi;
+        .assignment-title img {
+            height: 18cqi; /* Responsive height for the logo */
             margin: 2cqi auto;
             display: block;
         }
@@ -354,10 +359,7 @@
             </div>
 
             <div class="assignment-title">
-                <!-- Academic Cap SVG Logo inside to ensure it loads without external files -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#15355b">
-                    <path d="M12 3L1 9L4 10.63V17C4 18.65 7.58 20 12 20C16.42 20 20 18.65 20 17V10.63L23 9L12 3ZM12 18C8.68 18 6 16.96 6 15.5V11.72L12 15L18 11.72V15.5C18 16.96 15.32 18 12 18ZM12 12.75L3.81 8.25L12 3.75L20.19 8.25L12 12.75Z"/>
-                </svg>
+                <img src="logo.png" alt="Institute Logo">
                 <h2>Assignment</h2>
                 <h4 id="outSub">Subject Name (Code)</h4>
             </div>
