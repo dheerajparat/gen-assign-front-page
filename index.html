@@ -1,545 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment Front Page Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <!-- Add html2pdf.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-            width: 100%;
-        }
-        
-        header h1 {
-            font-size: 2.2rem;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        header p {
-            font-size: 1.1rem;
-            color: #34495e;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .content {
-            display: flex;
-            gap: 25px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-        
-        .form-container {
-            flex: 1;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .form-title {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
-            font-size: 1.5rem;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-        }
-        
-        .form-group {
-            margin-bottom: 18px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            color: #2c3e50;
-            font-size: 16px;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 15px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus, select:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        
-        .btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-            margin-right: 12px;
-            margin-top: 10px;
-        }
-        
-        .btn:hover {
-            background: #2980b9;
-        }
-        
-        .btn i {
-            margin-right: 6px;
-        }
-        
-        .btn-print {
-            background: #27ae60;
-        }
-        
-        .btn-print:hover {
-            background: #219653;
-        }
-        
-        .assignment-page {
-            flex: 1;
-            background: white;
-            padding: 0 0 0 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            min-height: 29.7cm;
-            width: 21cm;
-            max-width: 21cm;
-            margin: 0 auto;
-            position: relative;
-            font-family: 'Times New Roman', Times, serif;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 0;
-            padding-top: 40px;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        .header h2 {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-            color: #15355b;
-            font-weight: bold;
-        }
-        .header p {
-            font-size: 1.1rem;
-            margin-bottom: 0;
-            color: #222;
-        }
-        .assignment-title {
-            text-align: center;
-            margin: 0 0 10px 0;
-        }
-        .assignment-title img {
-            height: 220px;
-            margin: 20px auto 0;
-            display: block;
-            padding: 0;
-            background: transparent;
-        }
-        .assignment-title h2 {
-            font-size: 2.2rem;
-            color: #b10000;
-            font-weight: bold;
-            margin: 10px 0 0 0;
-            text-decoration: underline;
-        }
-        .assignment-title h4 {
-            font-size: 1.7rem; /* Increased from 1.3rem */
-            color: #175a9c;
-            font-weight: bold;
-            margin: 18px 0 0 0; /* More space above */
-            letter-spacing: 1px;
-        }
-        .info-section {
-            margin: 45px 0 0 0; /* Increased top margin */
-            padding: 0 80px;
-        }
-        .info-row {
-            display: flex;
-            margin-bottom: 22px; /* Increased spacing between rows */
-        }
-        .info-label {
-            width: 200px;
-            font-weight: normal;
-            font-size: 1.1rem;
-            color: #175a9c;
-        }
-        .info-value {
-            flex: 1;
-            border-bottom: none;
-            padding-bottom: 0;
-            font-size: 1.1rem;
-            min-height: 20px;
-            color: #175a9c;
-        }
-        .info-row .info-label,
-        .info-row .info-value {
-            font-size: 1.1rem;
-        }
-        .info-row .info-label {
-            font-weight: bold;
-            color: #222;
-        }
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 80px;
-            padding: 0 80px;
-        }
-        .signature-box {
-            width: 220px;
-            border-top: none;
-            padding-top: 0;
-            text-align: left;
-            font-size: 1.1rem;
-            color: #175a9c;
-        }
-        .signature-box:last-child {
-            text-align: right;
-        }
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .assignment-page, .assignment-page * {
-                visibility: visible;
-            }
-            .assignment-page {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100vw;
-                min-height: 100vh;
-                box-shadow: none;
-                border-radius: 0;
-                padding: 0;
-                margin: 0;
-            }
-            .no-print {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 1000px) {
-            .content {
-                flex-direction: column;
-            }
-            
-            .assignment-page {
-                min-height: auto;
-                width: 100%;
-            }
-        }
-        
-        .instructions {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-        }
-        
-        .instructions h3 {
-            color: #2c3e50;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assignment Generator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+/* Layout */
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Form */
+.form-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: 500;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    background: #3498db;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-print {
+    background: #27ae60;
+}
+
+/* Preview Wrapper */
+.preview-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* PRINT TEMPLATE (UNCHANGED CORE) */
+.assignment-page {
+    background: #fff;
+    width: 21cm;
+    min-height: 29.7cm;
+    transform-origin: top center;
+}
+
+/* Scaling only for screen */
+@media (max-width: 768px) {
+    .assignment-page {
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 500px) {
+    .assignment-page {
+        transform: scale(0.55);
+    }
+}
+
+/* ===== ORIGINAL PRINT DESIGN ===== */
+
+.header {
+    text-align: center;
+    padding-top: 40px;
+}
+
+.header h2 {
+    font-size: 2.5rem;
+    color: #15355b;
+}
+
+.assignment-title {
+    text-align: center;
+}
+
+.assignment-title img {
+    height: 200px;
+}
+
+.assignment-title h2 {
+    color: red;
+    text-decoration: underline;
+}
+
+.assignment-title h4 {
+    color: #175a9c;
+}
+
+.info-section {
+    margin-top: 40px;
+    padding: 0 60px;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.info-label {
+    width: 200px;
+    font-weight: bold;
+}
+
+.signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 80px;
+    padding: 0 60px;
+}
+
+/* PRINT SAFE */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .assignment-page, .assignment-page * {
+        visibility: visible;
+    }
+
+    .assignment-page {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transform: scale(1);
+    }
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>Assignment Front Page Generator</h1>
-            <p>Create professional assignment front pages that match your institution's format</p>
-        </header>
-        
-        <div class="content">
-            <div class="form-container">
-                <h2 class="form-title">Enter Assignment Details</h2>
-                
-                <div class="form-group">
-                    <label for="subject">Subject Name:</label>
-                    <input type="text" id="subject" placeholder="e.g., Electronics Circuit & Networks">
-                </div>
-                
-                <div class="form-group">
-                    <label for="subjectCode">Subject Code:</label>
-                    <input type="text" id="subjectCode" placeholder="e.g., 2021305">
-                </div>
-                
-                <div class="form-group">
-                    <label for="topic">Topic:</label>
-                    <input type="text" id="topic" placeholder="Enter assignment topic">
-                </div>
-                
-                <div class="form-group">
-                    <label for="submissionDate">Date of Submission:</label>
-                    <input type="date" id="submissionDate">
-                </div>
-                
-                <div class="form-group">
-                    <label for="studentName">Name of Student:</label>
-                    <input type="text" id="studentName" placeholder="Enter student name">
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="registrationNo">Registration No.:</label>
-                        <input type="text" id="registrationNo" placeholder="Enter registration number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="rollNo">Roll No.:</label>
-                        <input type="text" id="rollNo" placeholder="Enter roll number">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="branch">Branch/Year:</label>
-                    <select id="branch">
-                        <option value="Electronics engineering">Electronics Engineering</option>
-                        <option value="Computer engineering">Computer Engineering</option>
-                        <option value="Mechanical engineering">Mechanical Engineering</option>
-                        <option value="Civil engineering">Civil Engineering</option>
-                        <option value="Electrical engineering">Electrical Engineering</option>
-                    </select>
-                </div>
-                
-                <div class="actions">
-                    <button class="btn" onclick="generateAssignment()">
-                        <i class="fas fa-sync-alt"></i> Generate Page
-                    </button>
-                    <button class="btn btn-print" onclick="saveToGoogleSheetAndPrint()">
-                        <i class="fas fa-print"></i> Print as PDF
-                    </button>
-                </div>
-            </div>
-            
-            <div class="assignment-page" id="assignmentPage">
-                <div class="header">
-                    <h2>Government Polytechnic Aurangabad</h2>
-                    <p>At :- DHANARI(824102)</p>
-                </div>
-                <div class="assignment-title">
-                    <img src="logo.png" alt="College Logo">
-                    <h2>Assignment</h2>
-                    <h4 id="outputSubject">ELECTRONICS CIRCUIT & NETWORKS (2021305)</h4>
-                </div>
-                <div class="info-section">
-                    <div class="info-row">
-                        <div class="info-label">Topic :-</div>
-                        <div class="info-value" id="outputTopic"></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Date of Submission :-</div>
-                        <div class="info-value" id="outputSubmissionDate"></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label"><b>Name of Student :-</b></div>
-                        <div class="info-value" id="outputStudentName"></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label"><b>Registration No. :-</b></div>
-                        <div class="info-value" id="outputRegistrationNo"></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label"><b>Branch/Year :-</b></div>
-                        <div class="info-value" id="outputBranch">Electronics engineering</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label"><b>Roll No. :-</b></div>
-                        <div class="info-value" id="outputRollNo"></div>
-                    </div>
-                </div>
-                <div class="signatures">
-                    <div class="signature-box">
-                        Student signature :-
-                    </div>
-                    <div class="signature-box" style="text-align:right;">
-                        Teacher signature :-
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="instructions no-print">
-            <h3>How to Use This Generator</h3>
-            <ol>
-                <li>Fill in all the required details in the form on the left</li>
-                <li>Click the "Generate Page" button to update the preview</li>
-                <li>Review the assignment front page preview on the right</li>
-                <li>Click the "Print as PDF" button to print or save as PDF</li>
-                <li>In the print dialog, choose "Save as PDF" to download it as a PDF file</li>
-            </ol>
-        </div>
-    </div>
 
-    <script>
-        function generateAssignment() {
-            // Get input values
-            const subject = document.getElementById('subject').value;
-            const subjectCode = document.getElementById('subjectCode').value;
-            const topic = document.getElementById('topic').value;
-            const submissionDate = document.getElementById('submissionDate').value;
-            const studentName = document.getElementById('studentName').value;
-            const registrationNo = document.getElementById('registrationNo').value;
-            const branch = document.getElementById('branch').value;
-            const rollNo = document.getElementById('rollNo').value;
-            
-            // Format the date for display
-            let formattedDate = '';
-            if (submissionDate) {
-                const dateObj = new Date(submissionDate);
-                formattedDate = dateObj.toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-            }
-            
-            // Update the assignment page
-            document.getElementById('outputSubject').textContent = `${subject} (${subjectCode})`;
-            document.getElementById('outputTopic').textContent = topic;
-            document.getElementById('outputSubmissionDate').textContent = formattedDate;
-            document.getElementById('outputStudentName').textContent = studentName;
-            document.getElementById('outputRegistrationNo').textContent = registrationNo;
-            document.getElementById('outputBranch').textContent = branch;
-            document.getElementById('outputRollNo').textContent = rollNo;
-        }
-        
-        // Initialize with current date as default
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            let mm = today.getMonth() + 1;
-            let dd = today.getDate() + 7; // One week from today
-            
-            if (dd > 30) {
-                mm += 1;
-                dd -= 30;
-            }
-            
-            if (mm > 12) {
-                yyyy += 1;
-                mm -= 12;
-            }
-            
-            const nextWeek = yyyy + '-' + mm.toString().padStart(2, '0') + '-' + dd.toString().padStart(2, '0');
-            document.getElementById('submissionDate').value = nextWeek;
-            
-            // Set default values for demonstration
-            document.getElementById('subject').value = "write your subject name";
-            document.getElementById('subjectCode').value = "Subject code";
-            document.getElementById('topic').value = "Assignment topic";
-            document.getElementById('studentName').value = "your name";
-            document.getElementById('registrationNo').value = "your reg.";
-            document.getElementById('rollNo').value = "Class Roll n.";
-            
-            // Generate initial assignment page
-            generateAssignment();
-        });
-        
-        function saveToGoogleSheetAndPrint() {
-            // Get input values
-            const subject = document.getElementById('subject').value;
-            const subjectCode = document.getElementById('subjectCode').value;
-            const topic = document.getElementById('topic').value;
-            const submissionDate = document.getElementById('submissionDate').value;
-            const studentName = document.getElementById('studentName').value;
-            const registrationNo = document.getElementById('registrationNo').value;
-            const branch = document.getElementById('branch').value;
-            const rollNo = document.getElementById('rollNo').value;
+<div class="container">
 
-            // Prepare data
-            const data = {
-                subject,
-                subjectCode,
-                topic,
-                submissionDate,
-                studentName,
-                registrationNo,
-                branch,
-                rollNo
-            };
+<div class="content">
 
-            // Send to Google Apps Script Web App
-            fetch('https://script.google.com/macros/s/AKfycbzlGLcMKtJ6-uY3wlHRchS1JfSe82OV0me3AoEas6zMDrdA9x-uS5FqIGpEa8DdkePI/exec', {
-                method: 'POST',
-                mode: 'no-cors', // For Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            }).then(() => {
-                window.print();
-            });
-        }
-    </script>
+<!-- FORM -->
+<div class="form-container">
+<h2>Enter Details</h2>
+
+<div class="form-group">
+<label>Subject</label>
+<input id="subject">
+</div>
+
+<div class="form-group">
+<label>Subject Code</label>
+<input id="subjectCode">
+</div>
+
+<div class="form-group">
+<label>Topic</label>
+<input id="topic">
+</div>
+
+<div class="form-group">
+<label>Date</label>
+<input type="date" id="date">
+</div>
+
+<div class="form-group">
+<label>Name</label>
+<input id="name">
+</div>
+
+<div class="form-row">
+<input id="reg" placeholder="Registration">
+<input id="roll" placeholder="Roll">
+</div>
+
+<div class="form-group">
+<select id="branch">
+<option>Electronics Engineering</option>
+<option>Computer Engineering</option>
+</select>
+</div>
+
+<button class="btn" onclick="generate()">Generate</button>
+<button class="btn btn-print" onclick="window.print()">Print</button>
+
+</div>
+
+<!-- PREVIEW -->
+<div class="preview-wrapper">
+<div class="assignment-page" id="page">
+
+<div class="header">
+<h2>Government Polytechnic Aurangabad</h2>
+<p>At :- DHANARI(824102)</p>
+</div>
+
+<div class="assignment-title">
+<img src="logo.png">
+<h2>Assignment</h2>
+<h4 id="outSub"></h4>
+</div>
+
+<div class="info-section">
+<div class="info-row">
+<div class="info-label">Topic :-</div>
+<div id="outTopic"></div>
+</div>
+
+<div class="info-row">
+<div class="info-label">Date :-</div>
+<div id="outDate"></div>
+</div>
+
+<div class="info-row">
+<div class="info-label">Name :-</div>
+<div id="outName"></div>
+</div>
+
+<div class="info-row">
+<div class="info-label">Reg :-</div>
+<div id="outReg"></div>
+</div>
+
+<div class="info-row">
+<div class="info-label">Branch :-</div>
+<div id="outBranch"></div>
+</div>
+
+<div class="info-row">
+<div class="info-label">Roll :-</div>
+<div id="outRoll"></div>
+</div>
+</div>
+
+<div class="signatures">
+<div>Student Signature</div>
+<div>Teacher Signature</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function generate() {
+document.getElementById("outSub").innerText =
+document.getElementById("subject").value + " (" +
+document.getElementById("subjectCode").value + ")";
+
+document.getElementById("outTopic").innerText =
+document.getElementById("topic").value;
+
+document.getElementById("outDate").innerText =
+document.getElementById("date").value;
+
+document.getElementById("outName").innerText =
+document.getElementById("name").value;
+
+document.getElementById("outReg").innerText =
+document.getElementById("reg").value;
+
+document.getElementById("outBranch").innerText =
+document.getElementById("branch").value;
+
+document.getElementById("outRoll").innerText =
+document.getElementById("roll").value;
+}
+</script>
+
 </body>
 </html>
-
-
