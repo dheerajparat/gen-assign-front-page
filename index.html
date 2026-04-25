@@ -1,329 +1,445 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assignment Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Generator</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
-}
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --paper-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-body {
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-    padding: 15px;
-    overflow-x: hidden;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Layout */
-.container {
-    max-width: 1200px;
-    margin: auto;
-}
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
 
-.content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
 
-/* Responsive */
-@media (max-width: 1000px) {
-    .content {
-        grid-template-columns: 1fr;
-    }
-}
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 2rem;
+            }
+        }
 
-/* Form */
-.form-container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-}
+        /* ===== FORM DESIGN ===== */
+        .form-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 2rem;
+        }
 
-.form-group {
-    margin-bottom: 15px;
-}
+        .form-container h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            text-align: center;
+        }
 
-label {
-    font-weight: 500;
-}
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            outline: none;
+            font-family: inherit;
+        }
 
-@media (max-width: 600px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}
+        .form-group input:focus, 
+        .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
 
-/* Buttons */
-.btn {
-    padding: 10px 15px;
-    border: none;
-    background: #3498db;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
 
-.btn-print {
-    background: #27ae60;
-}
+        .btn-print {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 1rem;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-/* Preview Wrapper */
-.preview-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    display: flex;
-    justify-content: center;
-}
+        .btn-print:hover {
+            background: var(--primary-hover);
+        }
 
-/* PRINT TEMPLATE (UNCHANGED CORE) */
-.assignment-page {
-    background: #fff;
-    width: 21cm;
-    min-height: 29.7cm;
-    transform-origin: top center;
-}
+        /* ===== PREVIEW / A4 PAPER DESIGN ===== */
+        .preview-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
 
-/* Scaling only for screen */
-@media (max-width: 768px) {
-    .assignment-page {
-        transform: scale(0.7);
-    }
-}
+        /* Using Container Queries so fonts and padding scale perfectly 
+           regardless of the screen size, maintaining the exact A4 look.
+        */
+        .assignment-page {
+            container-type: inline-size;
+            background: #fff;
+            width: 100%;
+            max-width: 21cm; /* Standard A4 width limit for big screens */
+            aspect-ratio: 210 / 297; /* Exact A4 Ratio */
+            box-shadow: var(--paper-shadow);
+            border-radius: 4px;
+            padding: 8cqi; /* 8% of container width */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-@media (max-width: 500px) {
-    .assignment-page {
-        transform: scale(0.55);
-    }
-}
+        .header {
+            text-align: center;
+            margin-bottom: 4cqi;
+        }
 
-/* ===== ORIGINAL PRINT DESIGN ===== */
+        .header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 5cqi;
+            color: #15355b;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
 
-.header {
-    text-align: center;
-    padding-top: 40px;
-}
+        .header p {
+            font-size: 3cqi;
+            color: #333;
+            margin-top: 1cqi;
+            font-weight: 500;
+        }
 
-.header h2 {
-    font-size: 2.5rem;
-    color: #15355b;
-}
+        .assignment-title {
+            text-align: center;
+            margin-bottom: 6cqi;
+        }
 
-.assignment-title {
-    text-align: center;
-}
+        .assignment-title svg {
+            width: 18cqi;
+            height: 18cqi;
+            margin: 2cqi auto;
+            display: block;
+        }
 
-.assignment-title img {
-    height: 200px;
-}
+        .assignment-title h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 5.5cqi;
+            color: #d32f2f;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            margin-bottom: 1cqi;
+        }
 
-.assignment-title h2 {
-    color: red;
-    text-decoration: underline;
-}
+        .assignment-title h4 {
+            font-size: 3.5cqi;
+            color: #175a9c;
+            font-weight: 600;
+        }
 
-.assignment-title h4 {
-    color: #175a9c;
-}
+        .info-section {
+            padding: 0 4cqi;
+            flex-grow: 1;
+        }
 
-.info-section {
-    margin-top: 40px;
-    padding: 0 60px;
-}
+        .info-row {
+            display: flex;
+            margin-bottom: 3.5cqi;
+            align-items: flex-end;
+            font-size: 3.2cqi;
+        }
 
-.info-row {
-    display: flex;
-    margin-bottom: 20px;
-}
+        .info-label {
+            font-weight: 600;
+            width: 22cqi;
+            color: #222;
+        }
 
-.info-label {
-    width: 200px;
-    font-weight: bold;
-}
+        .info-value {
+            flex: 1;
+            border-bottom: 1px dashed #718096;
+            padding-bottom: 0.5cqi;
+            color: #1a202c;
+            min-height: 4cqi; /* Ensures empty fields still show a line */
+            font-family: 'Poppins', sans-serif;
+        }
 
-.signatures {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 80px;
-    padding: 0 60px;
-}
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4cqi;
+            margin-top: 10cqi;
+            font-size: 3.2cqi;
+            font-weight: 600;
+        }
 
-/* PRINT SAFE */
-@media print {
-    body * {
-        visibility: hidden;
-    }
+        .signature-box {
+            text-align: center;
+            border-top: 1px solid #000;
+            padding-top: 1cqi;
+            width: 35cqi;
+        }
 
-    .assignment-page, .assignment-page * {
-        visibility: visible;
-    }
+        /* ===== PRINT STYLES ===== */
+        @page {
+            size: A4;
+            margin: 0;
+        }
 
-    .assignment-page {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        transform: scale(1);
-    }
-}
-</style>
+        @media print {
+            body {
+                background: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .form-container {
+                display: none; /* Hide form when printing */
+            }
+
+            .container {
+                display: block;
+                padding: 0;
+                margin: 0;
+                max-width: none;
+            }
+
+            .preview-wrapper {
+                justify-content: flex-start;
+            }
+
+            .assignment-page {
+                box-shadow: none;
+                max-width: none;
+                width: 21cm;
+                height: 29.7cm; /* Fixed exact size for A4 print */
+                border-radius: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="container">
+    <!-- FORM -->
+    <div class="form-container">
+        <h2>Enter Details</h2>
 
-<div class="content">
+        <div class="form-group">
+            <label>Subject</label>
+            <input id="subject" placeholder="e.g. Embedded Systems">
+        </div>
 
-<!-- FORM -->
-<div class="form-container">
-<h2>Enter Details</h2>
+        <div class="form-group">
+            <label>Subject Code</label>
+            <input id="subjectCode" placeholder="e.g. 22401">
+        </div>
 
-<div class="form-group">
-<label>Subject</label>
-<input id="subject">
-</div>
+        <div class="form-group">
+            <label>Topic Name / Assignment No.</label>
+            <input id="topic" placeholder="e.g. Assignment No. 01">
+        </div>
 
-<div class="form-group">
-<label>Subject Code</label>
-<input id="subjectCode">
-</div>
+        <div class="form-group">
+            <label>Submission Date</label>
+            <input type="date" id="date">
+        </div>
 
-<div class="form-group">
-<label>Topic</label>
-<input id="topic">
-</div>
+        <div class="form-group">
+            <label>Student Name</label>
+            <input id="name" placeholder="Full Name">
+        </div>
 
-<div class="form-group">
-<label>Date</label>
-<input type="date" id="date">
-</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Registration No.</label>
+                <input id="reg" placeholder="Reg No.">
+            </div>
+            <div class="form-group">
+                <label>Roll No.</label>
+                <input id="roll" placeholder="Roll No.">
+            </div>
+        </div>
 
-<div class="form-group">
-<label>Name</label>
-<input id="name">
-</div>
+        <div class="form-group">
+            <label>Branch / Department</label>
+            <select id="branch">
+                <option value="">Select Branch</option>
+                <option value="Electronics Engineering">Electronics Engineering</option>
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+            </select>
+        </div>
 
-<div class="form-row">
-<input id="reg" placeholder="Registration">
-<input id="roll" placeholder="Roll">
-</div>
+        <button class="btn-print" onclick="window.print()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print Assignment
+        </button>
+    </div>
 
-<div class="form-group">
-<select id="branch">
-<option>Electronics Engineering</option>
-<option>Computer Engineering</option>
-</select>
-</div>
+    <!-- PREVIEW (A4 PAPER) -->
+    <div class="preview-wrapper">
+        <div class="assignment-page" id="page">
+            
+            <div class="header">
+                <h2>Government Polytechnic Aurangabad</h2>
+                <p>At :- DHANARI (824102)</p>
+            </div>
 
-<button class="btn" onclick="generate()">Generate</button>
-<button class="btn btn-print" onclick="window.print()">Print</button>
+            <div class="assignment-title">
+                <!-- Academic Cap SVG Logo inside to ensure it loads without external files -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#15355b">
+                    <path d="M12 3L1 9L4 10.63V17C4 18.65 7.58 20 12 20C16.42 20 20 18.65 20 17V10.63L23 9L12 3ZM12 18C8.68 18 6 16.96 6 15.5V11.72L12 15L18 11.72V15.5C18 16.96 15.32 18 12 18ZM12 12.75L3.81 8.25L12 3.75L20.19 8.25L12 12.75Z"/>
+                </svg>
+                <h2>Assignment</h2>
+                <h4 id="outSub">Subject Name (Code)</h4>
+            </div>
 
-</div>
+            <div class="info-section">
+                <div class="info-row">
+                    <div class="info-label">Topic :-</div>
+                    <div class="info-value" id="outTopic"></div>
+                </div>
 
-<!-- PREVIEW -->
-<div class="preview-wrapper">
-<div class="assignment-page" id="page">
+                <div class="info-row">
+                    <div class="info-label">Date :-</div>
+                    <div class="info-value" id="outDate"></div>
+                </div>
 
-<div class="header">
-<h2>Government Polytechnic Aurangabad</h2>
-<p>At :- DHANARI(824102)</p>
-</div>
+                <div class="info-row">
+                    <div class="info-label">Name :-</div>
+                    <div class="info-value" id="outName"></div>
+                </div>
 
-<div class="assignment-title">
-<img src="logo.png">
-<h2>Assignment</h2>
-<h4 id="outSub"></h4>
-</div>
+                <div class="info-row">
+                    <div class="info-label">Reg. No :-</div>
+                    <div class="info-value" id="outReg"></div>
+                </div>
 
-<div class="info-section">
-<div class="info-row">
-<div class="info-label">Topic :-</div>
-<div id="outTopic"></div>
-</div>
+                <div class="info-row">
+                    <div class="info-label">Branch :-</div>
+                    <div class="info-value" id="outBranch"></div>
+                </div>
 
-<div class="info-row">
-<div class="info-label">Date :-</div>
-<div id="outDate"></div>
-</div>
+                <div class="info-row">
+                    <div class="info-label">Roll No :-</div>
+                    <div class="info-value" id="outRoll"></div>
+                </div>
+            </div>
 
-<div class="info-row">
-<div class="info-label">Name :-</div>
-<div id="outName"></div>
-</div>
+            <div class="signatures">
+                <div class="signature-box">Student Signature</div>
+                <div class="signature-box">Teacher Signature</div>
+            </div>
 
-<div class="info-row">
-<div class="info-label">Reg :-</div>
-<div id="outReg"></div>
-</div>
-
-<div class="info-row">
-<div class="info-label">Branch :-</div>
-<div id="outBranch"></div>
-</div>
-
-<div class="info-row">
-<div class="info-label">Roll :-</div>
-<div id="outRoll"></div>
-</div>
-</div>
-
-<div class="signatures">
-<div>Student Signature</div>
-<div>Teacher Signature</div>
-</div>
-
-</div>
-</div>
-
-</div>
+        </div>
+    </div>
 </div>
 
 <script>
-function generate() {
-document.getElementById("outSub").innerText =
-document.getElementById("subject").value + " (" +
-document.getElementById("subjectCode").value + ")";
+    // Real-time Update Logic
+    const inputs = document.querySelectorAll('input, select');
+    
+    function updatePreview() {
+        const subject = document.getElementById("subject").value.trim();
+        const subjectCode = document.getElementById("subjectCode").value.trim();
+        
+        let subText = "Subject Name (Code)"; // Default placeholder
+        if (subject || subjectCode) {
+            subText = `${subject} ${subjectCode ? `(${subjectCode})` : ''}`.trim();
+        }
+        document.getElementById("outSub").innerText = subText;
 
-document.getElementById("outTopic").innerText =
-document.getElementById("topic").value;
+        // Date formatter
+        let dateValue = document.getElementById("date").value;
+        if(dateValue) {
+            const dateObj = new Date(dateValue);
+            dateValue = dateObj.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
+        }
 
-document.getElementById("outDate").innerText =
-document.getElementById("date").value;
+        // Updating other fields
+        document.getElementById("outTopic").innerText = document.getElementById("topic").value;
+        document.getElementById("outDate").innerText = dateValue;
+        document.getElementById("outName").innerText = document.getElementById("name").value;
+        document.getElementById("outReg").innerText = document.getElementById("reg").value;
+        document.getElementById("outBranch").innerText = document.getElementById("branch").value;
+        document.getElementById("outRoll").innerText = document.getElementById("roll").value;
+    }
 
-document.getElementById("outName").innerText =
-document.getElementById("name").value;
+    // Attach event listeners to update in real-time as user types
+    inputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
 
-document.getElementById("outReg").innerText =
-document.getElementById("reg").value;
-
-document.getElementById("outBranch").innerText =
-document.getElementById("branch").value;
-
-document.getElementById("outRoll").innerText =
-document.getElementById("roll").value;
-}
+    // Initialize with placeholders
+    updatePreview();
 </script>
 
 </body>
